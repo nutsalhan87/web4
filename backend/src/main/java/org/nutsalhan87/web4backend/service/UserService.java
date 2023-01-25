@@ -25,7 +25,7 @@ public class UserService {
     @Transactional
     public Long addUser(String username, String password) {
         if (userRepository.findUserByUsername(username).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Такой пользователь уже существует");
         }
         Long token = passwordProcessor.getToken();
         String encoded = passwordProcessor.encode(password);
@@ -38,11 +38,11 @@ public class UserService {
     @Transactional
     public Long signIn(String username, String password) {
         if (userRepository.findUserByUsername(username).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User does not exist");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Пользователя с таким именем пользователя нет");
         }
         User user = userRepository.findUserByUsername(username).get();
         if (!passwordProcessor.matches(password, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong password");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Неверный пароль");
         }
         Long token = passwordProcessor.getToken();
         user.setToken(token);
@@ -55,7 +55,7 @@ public class UserService {
     public void throwIfTokenInvalid(Long token) {
         Optional<Long> optional = userRepository.findToken(token);
         if (optional.isEmpty() || optional.get() == 0L) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token is invalid");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ошибочный токен");
         }
     }
 

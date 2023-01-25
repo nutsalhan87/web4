@@ -24,16 +24,17 @@ public class ShotController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<Shot> getCoordinates(@RequestParam(value = "x-api-token") Long token) throws Exception {
+    @PostMapping("/get")
+    public List<Shot> getCoordinates(@RequestParam(value = "x-api-token") Long token) {
         String username = userService.getUsernameByToken(token);
         return shotService.getShotsByUsername(username);
     }
 
-    @PostMapping
+    @PostMapping("/send")
     public Shot process(@RequestParam(value = "x") float x, @RequestParam("y") float y, @RequestParam("r") float r,
-                        @RequestParam(value = "x-api-token") Long token) throws Exception {
+                        @RequestParam(value = "x-api-token") Long token) {
         Instant time = Instant.now();
+        ShotHandler.validateOrThrow(x, y, r);
         String username = userService.getUsernameByToken(token);
         String date = Clock.formatter.format(new Date());
         boolean result = ShotHandler.isInRectangle(x, y, r) || ShotHandler.isInTriangle(x, y, r) || ShotHandler.isInQuartersphere(x, y, r);

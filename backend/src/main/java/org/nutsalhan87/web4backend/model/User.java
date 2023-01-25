@@ -3,7 +3,7 @@ package org.nutsalhan87.web4backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USERS_n87")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
